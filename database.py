@@ -1,5 +1,11 @@
 import mysql.connector
 from dotenv import load_dotenv
+import os
+load_dotenv()
+
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
+db = os.getenv("DB_NAME")
 
 def get_connection():
     return mysql.connector.connect(
@@ -39,5 +45,5 @@ def setup_database():
     );
     """
     cursor.execute(ddl_statements, multi=True)
-    connection.commit()
+    cursor.close()
     connection.close()

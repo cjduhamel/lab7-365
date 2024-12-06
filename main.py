@@ -27,50 +27,74 @@ def reservations():
     # Check room availability
     available_rooms = find_available_rooms(start_date, end_date, room_code, bed_type, guest_count)
     if not available_rooms:
-        print("\nNo exact matches found. Suggesting alternatives with relaxed constraints...")
-        suggestions = alternative_rooms(start_date, end_date, guest_count, bed_type)
+        print("\nNo exact rooms found. Here are alternatives within a month of the dates you requested:")
+        suggestions = alternative_rooms(start_date, end_date, guest_count, room_code, bed_type)
         if not suggestions:
-            print("No suitable rooms are available for the requested number of guests.")
+            print("Unfortunately, no rooms are available.")
             return
-        print("\nSuggested Rooms:")
+        print("\nAlternative Rooms:")
         for i, room in enumerate(suggestions, 1):
             print(
                 f"{i}. RoomCode: {room['RoomCode']}, Name: {room['RoomName']}, Bed Type: {room['bedType']}, Base Price: {room['basePrice']}")
-        return
+        choice = input("\nEnter option number to book, or 'Cancel' to exit: ").strip()
+        if choice.lower() == "cancel":
+            print("Reservation cancelled.")
+            return
+        selected_room = suggestions[int(choice) - 1]
+        cost = total_cost(start_date, end_date, selected_room["basePrice"])
 
-    # Display available rooms
-    print("\nAvailable Rooms:")
-    for i, room in enumerate(available_rooms, 1):
-        print(
-            f"{i}. RoomCode: {room['RoomCode']}, Name: {room['RoomName']}, Bed Type: {room['bedType']}, Base Price: {room['basePrice']}")
+        # Confirm booking
+        print("\nBooking Confirmation:")
+        print(f"Name: {first_name} {last_name}")
+        print(f"Room: {selected_room['RoomCode']} ({selected_room['RoomName']}), Bed Type: {selected_room['bedType']}")
+        print(f"Dates: {start_date} to {end_date}")
+        print(f"Adults: {adults}, Children: {kids}")
+        print(f"Total Cost: ${cost}")
 
-    # Prompt user to book
-    choice = input("\nEnter option number to book, or 'Cancel' to exit: ")
-    if choice.lower() == "cancel":
-        print("Reservation canceled.")
-        return
+        confirm = input("\nConfirm booking? (yes/no): ")
+        if confirm.lower() == "yes":
+            book_reservation(first_name, last_name, selected_room["RoomCode"], start_date, end_date, adults, kids,
+                             cost)
+            print("Reservation successfully booked!")
+        else:
+            print("Ok, have a good day.")
 
-    selected_room = available_rooms[int(choice) - 1]
-    cost = total_cost(start_date, end_date, selected_room["basePrice"])
 
-    # Confirm booking
-    print("\nBooking Confirmation:")
-    print(f"Name: {first_name} {last_name}")
-    print(f"Room: {selected_room['RoomCode']} ({selected_room['RoomName']}), Bed Type: {selected_room['bedType']}")
-    print(f"Dates: {start_date} to {end_date}")
-    print(f"Adults: {adults}, Children: {kids}")
-    print(f"Total Cost: ${cost}")
-
-    confirm = input("\nConfirm booking? (yes/no): ")
-    if confirm.lower() == "yes":
-        book_reservation(first_name, last_name, selected_room["RoomCode"], start_date, end_date, adults, kids,
-                         cost)
-        print("Reservation successfully booked!")
     else:
-        print("Reservation not confirmed.")
+        # Display available rooms
+        print("\nAvailable Rooms:")
+        for i, room in enumerate(available_rooms, 1):
+            print(
+                f"{i}. RoomCode: {room['RoomCode']}, Name: {room['RoomName']}, Bed Type: {room['bedType']}, Base Price: {room['basePrice']}")
+
+        # Prompt user to book
+        choice = input("\nEnter option number to book, or 'Cancel' to exit: ")
+        if choice.lower() == "cancel":
+            print("Reservation cancelled.")
+            return
+
+        selected_room = available_rooms[int(choice) - 1]
+        cost = total_cost(start_date, end_date, selected_room["basePrice"])
+
+        # Confirm booking
+        print("\nBooking Confirmation:")
+        print(f"Name: {first_name} {last_name}")
+        print(f"Room: {selected_room['RoomCode']} ({selected_room['RoomName']}), Bed Type: {selected_room['bedType']}")
+        print(f"Dates: {start_date} to {end_date}")
+        print(f"Adults: {adults}, Children: {kids}")
+        print(f"Total Cost: ${cost}")
+
+        confirm = input("\nConfirm booking? (yes/no): ")
+        if confirm.lower() == "yes":
+            book_reservation(first_name, last_name, selected_room["RoomCode"], start_date, end_date, adults, kids,
+                             cost)
+            print("Reservation successfully booked!")
+        else:
+            print("Ok, have a good day.")
 
 
 def main():
+    setup_database()
     user_input = input("Enter command: ").strip()
     if user_input == "1":
         display_rooms()

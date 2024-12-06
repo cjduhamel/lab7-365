@@ -52,6 +52,7 @@ def rooms_and_rates():
 
     cursor.execute(query)
     results = cursor.fetchall()
+    cursor.close()
     connection.close()
     return results
 
@@ -86,29 +87,55 @@ def find_available_rooms(start_date, end_date, room_code=None, bed_type=None, gu
 
     cursor.execute(query, filters)
     results = cursor.fetchall()
+
+    available_rooms = [room for room in results if guest_count <= room["maxOcc"]]
+
+    cursor.close()
     connection.close()
 
-    # Filter by guest capacity
-    available_rooms = [
-        room for room in results if guest_count <= room["maxOcc"]
-    ]
-    return available_rooms
+    if available_rooms:
+        return available_rooms
+    return None
 
 
-def alternative_rooms(start_date, end_date, guest_count, limit=5):
+def alternative_rooms(start_date, end_date, guest_count, room_code=None, bed_type=None, range_days=30, limit=5):
     # FR2
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
 
-    # Find alternative rooms/dates
+    # adjust the date range by a month
+    relaxed_start_date = (datetime.strptime(start_date, "%Y-%m-%d") - timedelta(days=range_days)).strftime("%Y-%m-%d")
+    relaxed_end_date = (datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=range_days)).strftime("%Y-%m-%d")
+
     query = """
-    SELECT DISTINCT r.RoomCode, r.RoomName, r.Beds, r.bedType, r.maxOcc, r.basePrice, r.decor
-    FROM lab7_rooms r
-    WHERE r.maxOcc >= %s
-    LIMIT %s
-    """
-    cursor.execute(query, (guest_count, limit))
+        SELECT DISTINCT r.RoomCode, r.RoomName, r.Beds, r.bedType, r.maxOcc, r.basePrice, r.decor
+        FROM lab7_rooms r
+        LEFT JOIN lab7_reservations res
+        ON r.RoomCode = res.Room
+        AND (
+            (res.CheckIn <= %s AND res.Checkout > %s) OR  -- Overlapping reservations
+            (res.CheckIn < %s AND res.Checkout >= %s) OR
+            (res.CheckIn >= %s AND res.Checkout <= %s)
+        )
+        WHERE res.Room IS NULL  -- Only show rooms without overlapping reservations
+        """
+    filters = [relaxed_start_date, relaxed_start_date, relaxed_end_date, relaxed_end_date, relaxed_start_date,
+               relaxed_end_date]
+
+    # filters for room code and bed type
+    if room_code and room_code != "Any":
+        query += " AND r.RoomCode = %s"
+        filters.append(room_code)
+    if bed_type and bed_type != "Any":
+        query += " AND r.bedType = %s"
+        filters.append(bed_type)
+
+    query += " AND r.maxOcc >= %s LIMIT %s"
+    filters.extend([guest_count, limit])
+
+    cursor.execute(query, filters)
     results = cursor.fetchall()
+    cursor.close()
     connection.close()
     return results
 
@@ -143,6 +170,6 @@ def book_reservation(first_name, last_name, room_code, start_date, end_date, adu
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     cursor.execute(query, (room_code, start_date, end_date, total_cost, last_name, first_name, adults, kids))
-    connection.commit()
+    cursor.close()
     connection.close()
 
