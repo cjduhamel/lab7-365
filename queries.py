@@ -1,5 +1,10 @@
 from database import get_connection
 from datetime import datetime, timedelta
+import warnings
+import pandas as pd
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 def rooms_and_rates():
     #FR1
@@ -173,3 +178,37 @@ def book_reservation(first_name, last_name, room_code, start_date, end_date, adu
     cursor.close()
     connection.close()
 
+
+def search_reservations(vals : dict):
+    #FR4
+    connection = get_connection()
+
+    for key in vals:
+        if key == "start_date":
+            if vals[key]:
+                vals[key] = "CheckIn >= '" + vals[key] + "' AND"
+            else:
+                vals[key] = ""
+        elif key == "end_date":
+            if vals[key]:
+                vals[key] = "CheckOut <= '" + vals[key] + "' AND"
+            else:
+                vals[key] = ""
+        else:
+            if not vals[key]:
+                vals[key] = "%"
+
+    query = """
+        SELECT CODE, Room, RoomName, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids FROM lab7_reservations
+            INNER JOIN lab7_rooms ON lab7_reservations.Room = lab7_rooms.RoomCode
+        WHERE 
+            FirstName LIKE "%s" AND 
+            LastName LIKE "%s" AND
+            %s
+            %s
+            Room LIKE "%s" AND
+            CODE LIKE "%s"
+        """ % (vals["first_name"], vals["last_name"], vals["start_date"], vals["end_date"], vals["room_code"], vals["reservation_code"])
+    df = pd.read_sql_query(query, connection)
+    connection.close()
+    return df
