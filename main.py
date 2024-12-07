@@ -1,6 +1,6 @@
 from database import setup_database
-from queries import (rooms_and_rates,
-                     find_available_rooms, alternative_rooms, total_cost, book_reservation)
+from queries import *
+import pandas as pd
 
 def display_rooms():
     # FR1
@@ -93,6 +93,59 @@ def reservations():
             print("Ok, have a good day.")
 
 
+def reservation_cancel():
+    # FR3
+    print("Reservation Cancellation\n")
+    print("Please enter your reservation code to cancel your reservation.")
+
+    reservation_code = input("Reservation Code: ")
+    res = pd.DataFrame()
+    try:
+        res = reservation_exists(reservation_code)
+    except:
+        print("\nError occurred while searching for reservation.")
+        return
+
+    if not res.empty:
+        print("Reservation found.")
+        print("Reservation Details:")
+        print(res.to_string(index=False))
+        confirm = input("Are you sure you want to cancel this reservation? (yes/no): ")
+        if confirm.lower() == "yes":
+            cancel_reservation(reservation_code)
+            print("Reservation successfully cancelled.")
+        else:
+            print("Ok, have a good day.")
+    else:
+        print("Reservation not found.")
+        
+
+
+def detailed_reservation():
+    # FR4
+    print("Welcome to the Reservation Search System\n")
+    print("Enter your Search Criteria, leave a field blank to skip it\n")
+
+    vals = {}
+    vals["first_name"] = input("First Name: ")
+    vals["last_name"] = input("Last Name: ")
+    vals["start_date"] = input("Start Date (YYYY-MM-DD): ")
+    vals["end_date"] = input("End Date (YYYY-MM-DD): ")
+    vals["room_code"] = input("Room Code: ")
+    vals["reservation_code"] = input("Reservation Code: ")
+
+    results : pd.DataFrame = search_reservations(vals)
+
+    print("\nSearch Results:")
+    print(results.to_string(index=False))
+
+
+def revenue():
+    # FR5
+    pass
+
+
+
 def main():
     setup_database()
     user_input = input("Enter command: ").strip()
@@ -100,12 +153,13 @@ def main():
         display_rooms()
     elif user_input == "2":
         reservations()
+    elif user_input == "3":
+        reservation_cancel()
+    elif user_input == "4":
+        detailed_reservation()
     else:
         print("bye")
-    '''elif user_input == "3:
-        # something
-    elif user_input == "4:
-        # something
+    '''
     elif user_input == "5:
         # something'''
 
