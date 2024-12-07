@@ -95,7 +95,31 @@ def reservations():
 
 def reservation_cancel():
     # FR3
-    pass
+    print("Reservation Cancellation\n")
+    print("Please enter your reservation code to cancel your reservation.")
+
+    reservation_code = input("Reservation Code: ")
+    res = pd.DataFrame()
+    try:
+        res = reservation_exists(reservation_code)
+    except:
+        print("\nError occurred while searching for reservation.")
+        return
+
+    if not res.empty:
+        print("Reservation found.")
+        print("Reservation Details:")
+        print(res.to_string(index=False))
+        confirm = input("Are you sure you want to cancel this reservation? (yes/no): ")
+        if confirm.lower() == "yes":
+            cancel_reservation(reservation_code)
+            print("Reservation successfully cancelled.")
+        else:
+            print("Ok, have a good day.")
+    else:
+        print("Reservation not found.")
+        
+
 
 def detailed_reservation():
     # FR4
@@ -129,13 +153,13 @@ def main():
         display_rooms()
     elif user_input == "2":
         reservations()
+    elif user_input == "3":
+        reservation_cancel()
     elif user_input == "4":
         detailed_reservation()
     else:
         print("bye")
     '''
-    elif user_input == "3:
-        # something
     elif user_input == "5:
         # something'''
 

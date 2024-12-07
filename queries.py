@@ -212,3 +212,21 @@ def search_reservations(vals : dict):
     df = pd.read_sql_query(query, connection)
     connection.close()
     return df
+
+def reservation_exists(res_code):
+    connection = get_connection()
+    
+    query = "SELECT * FROM lab7_reservations WHERE CODE = %s" % res_code
+
+    df = pd.read_sql_query(query, connection)
+    connection.close()
+    return df
+
+def cancel_reservation(res_code):
+    connection = get_connection()
+    cursor = connection.cursor()
+    
+    query = "DELETE FROM lab7_reservations WHERE CODE = %s" % res_code
+    cursor.execute(query)
+    cursor.close()
+    connection.close()
