@@ -142,7 +142,9 @@ def detailed_reservation():
 
 def revenue():
     # FR5
-    pass
+    revenue = get_revenue()
+    #print the dataframe
+    print(revenue.to_string(index=False))
 
 
 
@@ -157,11 +159,11 @@ def main():
         reservation_cancel()
     elif user_input == "4":
         detailed_reservation()
+    elif user_input == "5":
+        revenue()
     else:
         print("bye")
-    '''
-    elif user_input == "5:
-        # something'''
+    
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ import datetime
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
+warnings.filterwarnings("ignore", message="Downcasting object dtype arrays on")
 
 def rooms_and_rates():
     #FR1
@@ -240,11 +241,11 @@ def get_revenue():
     query = """
         WITH room_month AS (
             SELECT RoomCode, RoomName, CODE, CheckIn, CheckOut, MONTH(CheckIn), 
-                   ROUND(DATEDIFF(LEAST(CheckOut, "{0}-{1}-01"), GREATEST(CheckIn, "{2}-{3}-01")) * Rate) AS DollarRevenue
+                   ROUND(DATEDIFF(LEAST(CheckOut, "{0}-{1}-{7}"), GREATEST(CheckIn, "{2}-{3}-01")) * Rate) AS DollarRevenue
             FROM lab7_rooms AS rm
             INNER JOIN lab7_reservations AS rs ON Room = RoomCode
             WHERE (YEAR(CheckIn) = YEAR(CURRENT_DATE) OR YEAR(CheckOut) = YEAR(CURRENT_DATE))
-              AND (MONTH(CheckIn) = {4} OR MONTH(CheckOut) = {5}) 
+              AND (MONTH(CheckIn) = {4} OR MONTH(CheckOut) = {5})
             ORDER BY CheckIn
         )
         
@@ -253,7 +254,7 @@ def get_revenue():
         GROUP BY RoomCode, RoomName
     """
 
-    df = pd.DataFrame(columns=['RoomCode', 'RoomName'])
+    df = pd.read_sql_query("SELECT RoomCode, RoomName FROM lab7_rooms", connection)
 
     # Loop through months
     for i in range(1, 13):
@@ -263,9 +264,18 @@ def get_revenue():
             i_0 = '0' + str(i)
         if next_month < 10:
             next_month = '0' + str(next_month)
+        next_year = current_year
+
+        day = "01"
+        
+        if i == 12:
+            next_month = '12'
+            next_year = current_year
+            day = "31"
+            
 
         
-        formatted_query = query.format(current_year, next_month, current_year, i_0, i, i, i)  # Use .format() to inject variables
+        formatted_query = query.format(next_year, next_month, current_year, i_0, i, i, i, day) 
         print("\n\nQuery for Month: ", i)
         print(formatted_query)
         result_df = pd.read_sql_query(formatted_query, connection)
@@ -273,6 +283,16 @@ def get_revenue():
 
     # Close the connection once after all queries are executed
     connection.close()
+
+    #format all revenue columns to be integers (not the first two columns)
+    df = df.fillna(0)
+    for i in range(2, 14):
+        df.iloc[:, i] = df.iloc[:, i].astype(int)
+    df['Total'] = df.sum(axis=1, numeric_only=True)
+
+    #add row at end with column totals
+    df.loc['Total'] = df.sum(numeric_only=True, axis=0)
+
     return df
 
 rev = get_revenue()
