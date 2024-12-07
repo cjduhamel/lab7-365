@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from database import get_connection
 from datetime import datetime, timedelta
 import warnings
@@ -128,10 +130,6 @@ def alternative_rooms(start_date, end_date, guest_count, room_code=None, bed_typ
     filters = [relaxed_start_date, relaxed_start_date, relaxed_end_date, relaxed_end_date, relaxed_start_date,
                relaxed_end_date]
 
-    # filters for room code and bed type
-    if room_code and room_code != "Any":
-        query += " AND r.RoomCode = %s"
-        filters.append(room_code)
     if bed_type and bed_type != "Any":
         query += " AND r.bedType = %s"
         filters.append(bed_type)
@@ -148,6 +146,9 @@ def alternative_rooms(start_date, end_date, guest_count, room_code=None, bed_typ
 
 def total_cost(start_date, end_date, base_rate):
     # FR2
+    if not isinstance(base_rate, Decimal):
+        base_rate = Decimal(base_rate)
+
     weekdays = 0
     weekends = 0
 
@@ -162,7 +163,7 @@ def total_cost(start_date, end_date, base_rate):
         current_date += timedelta(days=1)
 
     weekday_cost = weekdays * base_rate
-    weekend_cost = weekends * base_rate * 1.1
+    weekend_cost = weekends * base_rate * Decimal(1.1)
     return round(weekday_cost + weekend_cost, 2)
 
 
