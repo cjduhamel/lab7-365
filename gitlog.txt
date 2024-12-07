@@ -1,0 +1,124 @@
+Shreya: FR1, FR2, deliverables
+CJ: FR3, FR4, FR5
+
+commit 2d34f78098ccac628c4cc400e09cde5a8c3daa11
+Merge: bcb39b2 bf1f322
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 18:29:28 2024 -0800
+
+    Merge branch 'main' of https://github.com/cjduhamel/lab7-365
+
+commit bcb39b2e7f3996454ad0368282975c034d8a3762
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 18:29:21 2024 -0800
+
+    WHAAAAAAAA
+
+ main.py     | 10 ++++++----
+ queries.py  | 28 ++++++++++++++++++++++++----
+ revenue.csv | 23 ++++++++++++-----------
+ 3 files changed, 42 insertions(+), 19 deletions(-)
+
+commit bf1f32208eff6ea7a0b8e27c021c787da218e722
+Merge: 3f1261b 4b8129f
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Fri Dec 6 17:56:53 2024 -0800
+
+    added readme and runMerge remote-tracking branch 'refs/remotes/origin/main'
+
+commit 3f1261b05cf90fd0096ede0178186c01bba3d048
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Fri Dec 6 17:56:12 2024 -0800
+
+    added readme and run
+
+ README.md | 20 ++++++++++++++++++++
+ run.sh    |  1 +
+ 2 files changed, 21 insertions(+)
+
+commit 4b8129fc316272977e87f7a11be8215758008b60
+Merge: fefafd6 a0740c5
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 17:52:01 2024 -0800
+
+    Merge branch 'main' of https://github.com/cjduhamel/lab7-365
+
+commit fefafd6b879bc9c50189f7205ceda3772014ec74
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 17:50:51 2024 -0800
+
+    merging changes, almost done with get_revenue
+
+ queries.py  | 49 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ revenue.csv | 11 +++++++++++
+ 2 files changed, 59 insertions(+), 1 deletion(-)
+
+commit a0740c5fda2d5a8f010c4730d90bd97ec22ff089
+Merge: 5902a3d 7c09a22
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Fri Dec 6 17:02:49 2024 -0800
+
+    total costs
+
+commit 5902a3dcbc5bf1e3202a5e15d5233816974c36ce
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Fri Dec 6 16:54:12 2024 -0800
+
+    fixed total cost
+
+ queries.py | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+commit 7c09a222d939e9fdd2aeadcf9777fe3f48fb248a
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 16:05:46 2024 -0800
+
+    Finished R3, however does not delete from databse, why?
+
+ main.py    | 30 +++++++++++++++++++++++++++---
+ queries.py | 18 ++++++++++++++++++
+ 2 files changed, 45 insertions(+), 3 deletions(-)
+
+commit 207675dd3bd5f53dc29eaa3c3390c1f4fac3049e
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Fri Dec 6 15:25:53 2024 -0800
+
+    added gitignore, compled req 4
+
+ .gitignore |  2 ++
+ main.py    | 40 +++++++++++++++++++++++++++++++++++-----
+ queries.py | 39 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 76 insertions(+), 5 deletions(-)
+
+commit dc2694f5387b169187832b329bb035ac95a05792
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Fri Dec 6 12:22:40 2024 -0800
+
+    fixed FR2
+
+ __pycache__/database.cpython-312.pyc | Bin 1683 -> 1944 bytes
+ database.py                          |   8 ++-
+ main.py                              |  94 ++++++++++++++++++++++-------------
+ queries.py                           |  55 ++++++++++++++------
+ 4 files changed, 107 insertions(+), 50 deletions(-)
+
+commit 1812f9b4ec4d4b09621dd5d1299034682f79f276
+Author: Shreya  Arjun <shreyaarjun@Shreyas-MacBook-Air.local>
+Date:   Thu Dec 5 20:22:29 2024 -0800
+
+    FR1 and FR2
+
+ __pycache__/database.cpython-312.pyc | Bin 0 -> 1683 bytes
+ database.py                          |  43 ++++++++++
+ main.py                              |  91 ++++++++++++++++++++-
+ queries.py                           | 148 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 281 insertions(+), 1 deletion(-)
+
+commit 2f821da0fc14cb7b5ddab858918ec5a88b4281a1
+Author: C.J. DuHamel <cduhamel@calpoly.edu>
+Date:   Wed Dec 4 13:41:21 2024 -0800
+
+    init
+
+ main.py | 1 +
+ 1 file changed, 1 insertion(+)

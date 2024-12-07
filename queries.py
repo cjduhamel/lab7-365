@@ -295,6 +295,6 @@ def get_revenue():
 
     return df
 
-rev = get_revenue()
-print(rev)
-rev.to_csv("revenue.csv", index=False)
+#rev = get_revenue()
+#print(rev)
+#rev.to_csv("revenue.csv", index=False)
