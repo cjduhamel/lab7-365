@@ -1,5 +1,15 @@
-Shreya: FR1, FR2, deliverables
-CJ: FR3, FR4, FR5
+#Shreya: FR1, FR2, deliverables
+#CJ: FR3, FR4, FR5
+
+commit 8c6c536a26c04e742289d8d110244fcb4720520c
+Author: Shreya  Arjun <shreyaarjun@Shreyas-Air.lan>
+Date:   Fri Dec 6 20:09:45 2024 -0800
+
+    git log
+
+ gitlog.txt | 124 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ queries.py |   6 +--
+ 2 files changed, 127 insertions(+), 3 deletions(-)
 
 commit 2d34f78098ccac628c4cc400e09cde5a8c3daa11
 Merge: bcb39b2 bf1f322
