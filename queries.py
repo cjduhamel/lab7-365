@@ -4,6 +4,7 @@ from database import get_connection
 from datetime import datetime, timedelta
 import warnings
 import pandas as pd
+import datetime
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
@@ -231,3 +232,49 @@ def cancel_reservation(res_code):
     cursor.execute(query)
     cursor.close()
     connection.close()
+
+def get_revenue():
+    connection = get_connection()
+    current_year = datetime.datetime.now().year
+    print("\n\nCurrent Year: ", current_year)
+    query = """
+        WITH room_month AS (
+            SELECT RoomCode, RoomName, CODE, CheckIn, CheckOut, MONTH(CheckIn), 
+                   ROUND(DATEDIFF(LEAST(CheckOut, "{0}-{1}-01"), GREATEST(CheckIn, "{2}-{3}-01")) * Rate) AS DollarRevenue
+            FROM lab7_rooms AS rm
+            INNER JOIN lab7_reservations AS rs ON Room = RoomCode
+            WHERE (YEAR(CheckIn) = YEAR(CURRENT_DATE) OR YEAR(CheckOut) = YEAR(CURRENT_DATE))
+              AND (MONTH(CheckIn) = {4} OR MONTH(CheckOut) = {5}) 
+            ORDER BY CheckIn
+        )
+        
+        SELECT RoomCode, RoomName, SUM(DollarRevenue) as Revenue{6}
+        FROM room_month
+        GROUP BY RoomCode, RoomName
+    """
+
+    df = pd.DataFrame(columns=['RoomCode', 'RoomName'])
+
+    # Loop through months
+    for i in range(1, 13):
+        i_0 = i
+        next_month = i + 1
+        if i < 10:
+            i_0 = '0' + str(i)
+        if next_month < 10:
+            next_month = '0' + str(next_month)
+
+        
+        formatted_query = query.format(current_year, next_month, current_year, i_0, i, i, i)  # Use .format() to inject variables
+        print("\n\nQuery for Month: ", i)
+        print(formatted_query)
+        result_df = pd.read_sql_query(formatted_query, connection)
+        df = df.merge(result_df, how='outer', on=['RoomCode', 'RoomName'])
+
+    # Close the connection once after all queries are executed
+    connection.close()
+    return df
+
+rev = get_revenue()
+print(rev)
+rev.to_csv("revenue.csv", index=False)
